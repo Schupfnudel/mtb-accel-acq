@@ -6,9 +6,9 @@
 const int chipSelect = A5; //CS für Sd Kartenleser eh wirkungslos
 const int accel_kettenstrebe = 9;
 const int accel_lenker = 10;
-const int accel_rahmen = 11; 
+const int accel_rahmen = 11;
 const int n_messwerte = 6000;
-const int MPU_addr = 0x69; //i2c Adresse des MPU mit AD HIGH Signal
+const int MPU_addr = 0x69; //MPUs have two different adresses available, to use three via I2C I toggle between them by setting one AD0 pin at a time HIGH and then reading
 int16_t daten [n_messwerte][3][3];  // 3Darray for data, 1. number of buffered values, 2. three axes, 3. three sensors
 unsigned long zeit [n_messwerte];   //timestamp, needed to calculate freq and ftt later on
 
@@ -17,7 +17,7 @@ void setup() {
   pinMode(accel_kettenstrebe, OUTPUT);
   pinMode(accel_lenker, OUTPUT);
   pinMode(accel_rahmen, OUTPUT);
-  
+
   Wire.begin();
   Wire.setClock(400000);
 
@@ -113,7 +113,7 @@ void loop() {
 
   File data = SD.open("accel.txt", FILE_WRITE); //save data to SD when RAM buffer is full
 
-  for (int j = 0; j < n_messwerte; j++) {
+  for (int j = 0; j < n_messwerte; j++) { //format of csv for matlab extraction: timestamp, sensor1x, sensor1y, sensor1z, sensor2x ..... 
     data.print(zeit[j], DEC);
     data.write(", ");
     for (int l = 0; l < 3; l++) {
